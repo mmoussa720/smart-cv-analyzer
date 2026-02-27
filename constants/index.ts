@@ -218,9 +218,7 @@ export const AIResponseFormat = `
       skills: {
         score: number; //max 100
         tips: {
-          type: "good" | "improve";
-          tip: string; //make it a short "title" for the actual explanation
-          explanation: string; //explain in detail here
+          type: "gooPon: string; //explain in detail here
         }[]; //give 3-4 tips
       };
     }`;
