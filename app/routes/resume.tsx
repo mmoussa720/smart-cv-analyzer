@@ -15,30 +15,32 @@ const Resume = () => {
   const [imageUrl,setImageUrl]=useState('');
   const [resumeUrl,setResumeUrl]=useState('');
   const [feedback,setFeedback]=useState<Feedback|null>(null);
-  const navigate=useNavigate();
-    const loadResume=async()=>{
-        const resume=await kv.get(`resume:${id}`);
-        if(!resume)return;
-        const data=JSON.parse(resume);
-        const resumeBlob=await fs.read(data.resumePath);
-        if(!resumeBlob)return;
-        const pdfBlob=new Blob([resumeBlob],{type:"application/pdf"});
-        const resumeUrl=URL.createObjectURL(pdfBlob);
-        setResumeUrl(resumeUrl);
-        const imageBlob=await fs.read(data.imagePath);
-        if(!imageBlob)return;
-        const imageUrl=URL.createObjectURL(imageBlob);
-        setImageUrl(imageUrl);
-        setFeedback(data.feedback);
-        console.log(imageUrl,resumeUrl,feedback);
-    }
+    const [loadingResumes,setLoadingResumes]=useState<boolean>(false);
+    const navigate=useNavigate();
+
+
     useEffect(()=>{
         if(!isLoading&& !auth.isAuthenticated)navigate(`/auth?next=/resume/${id}`);
     },[isLoading])
   useEffect(() => {
+      const loadResume=async()=>{
+          const resume=await kv.get(`resume:${id}`);
+          if(!resume)return;
+          const data=JSON.parse(resume);
+          const resumeBlob=await fs.read(data.resumePath);
+          if(!resumeBlob)return;
+          const pdfBlob=new Blob([resumeBlob],{type:"application/pdf"});
+          const resumeUrl=URL.createObjectURL(pdfBlob);
+          setResumeUrl(resumeUrl);
+          const imageBlob=await fs.read(data.imagePath);
+          if(!imageBlob)return;
+          const imageUrl=URL.createObjectURL(imageBlob);
+          setImageUrl(imageUrl);
+          setFeedback(data.feedback);
+          console.log(imageUrl,resumeUrl,feedback);
+      }
     loadResume();
   }, [id]);
-
   return (
       <main className="!pt-0">
         <nav className="resume-nav">
@@ -60,7 +62,7 @@ const Resume = () => {
                 {feedback?(
                     <div className="flex flex-col gap-8 animate-in fade-in duration-1000">
                         <Summary feedback={feedback}></Summary>
-                        <Ats score={feedback.ATS.score || 0} suggestions={feedback.Ats.tips || []}></Ats>
+                        <Ats score={feedback.ATS.score || 0} suggestions={feedback.ATS.tips || []}></Ats>
                         <Details feedback={feedback}></Details>
                     </div>
                 ):(
