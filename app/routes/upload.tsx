@@ -59,6 +59,7 @@ const Upload = () => {
     await kv.set(`resume:${uuid}`,JSON.stringify(data));
     setStatusTex('Analysis complete,redirecting...');
     console.log(data);
+    navigate(`/resume/${uuid}`);
   }
   return (
 <main className="bg-[url('/images/bg-main.svg')] bg-cover">
